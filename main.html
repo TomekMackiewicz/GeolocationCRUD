@@ -34,8 +34,8 @@
     </div>    
 
     <script>
-    
-var map;
+   
+      var map;
       var customLabel = {
         restaurant: {
           label: 'R'
@@ -46,71 +46,15 @@ var map;
       };
 
       function initMap() {
-        console.log('initMap');
         map = new google.maps.Map(document.getElementById('map'), {
           //center: new google.maps.LatLng(52.22937, 21.01135),
           zoom: 13
         });
-
-        // ///////////////////////////////// User position
-        // var userPosOptions = {
-        //   enableHighAccuracy: true,
-        //   timeout: 5000,
-        //   maximumAge: 0
-        // };
-
-        // function userLocation(pos) {
-        //   console.log('userLocation');
-        //   var crd = pos.coords;
-        //   var userLat = document.getElementById('lat');
-        //   var userLong = document.getElementById("long");
-        //   var userAccuracy = document.getElementById("accuracy");
-        //   userLat.innerHTML = `Latitude : ${crd.latitude}`;
-        //   userLong.innerHTML = `Longitude: ${crd.longitude}`;
-        //   userAccuracy.innerHTML = `More or less ${crd.accuracy} meters.`;
-
-        //   var userCoords = new google.maps.LatLng(
-        //     parseFloat(crd.latitude),
-        //     parseFloat(crd.longitude)
-        //   );
-        //   //var marker = new GeolocationMarker(map);
-        //   var icon = "icon.png";
-        //   var userMarker = new google.maps.Marker({
-        //     map: map,
-        //     position: userCoords,
-        //     //labelContent: "You",
-        //     //label: 'Y'
-        //     icon: icon
-        //   });
-        // };
-
-        // function error(err) {
-        //   console.warn(`ERROR(${err.code}): ${err.message}`);
-        // };
-
-        // navigator.geolocation.getCurrentPosition(userLocation, error, userPosOptions);
-
-        // if (navigator.geolocation) {
-        //   navigator.geolocation.getCurrentPosition(function (position) {
-        //     console.log('geoLocation');
-        //     initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-        //     map.setCenter(initialLocation);
-        //     //console.log(initialLocation);
-        //   });
-        // } 
-        // /////////////////////////////////// end user position
-       
+  
         var infoWindow = new google.maps.InfoWindow;
 
         downloadUrl('geo.php', function(data) {
-          console.log('downloadUrl');
           var xml = data.responseXML;
-          // var mylat = map.getCenter().lat(); 
-          // var mylng = map.getCenter().lng();
-          // console.log(mylat);
-          // console.log(mylng);        
-          // var some = userCoords;
-          // console.log(some);
           var markers = xml.documentElement.getElementsByTagName('marker');
           Array.prototype.forEach.call(markers, function(markerElem) {
             var id = markerElem.getAttribute('id');
@@ -121,28 +65,6 @@ var map;
               parseFloat(markerElem.getAttribute('lat')),
               parseFloat(markerElem.getAttribute('lng'))
             );
-
-
-            ///////////////////////////////count distance
-            var rad = function(x) {
-              return x * Math.PI / 180;
-            };
-
-            function getDistance(position, point) {
-              var R = 6378137; // Earth’s mean radius in meter
-              var dLat = rad(point.lat() - position.coords.latitude);
-              var dLong = rad(point.lng() - position.coords.longitude);
-              var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(rad(position.coords.latitude)) * Math.cos(rad(point.lat())) *
-                Math.sin(dLong / 2) * Math.sin(dLong / 2);
-              var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-              var d = R * c;
-              console.log(d);
-            };
-            /////////////////////////////// end count distance
-
-            //getDistance(position, point);
-
 
             var places = document.getElementById('places');
             places.innerHTML += '<li>'+name+', '+address+', '+type+'</li>';
@@ -178,7 +100,6 @@ var map;
       };
 
       function userLocation(pos) {
-        console.log('userLocation');
         var crd = pos.coords;
         var userLat = document.getElementById('lat');
         var userLong = document.getElementById("long");
@@ -191,7 +112,6 @@ var map;
           parseFloat(crd.latitude),
           parseFloat(crd.longitude)
         );
-        //var marker = new GeolocationMarker(map);
         var icon = "icon.png";
         var userMarker = new google.maps.Marker({
           map: map,
@@ -210,29 +130,47 @@ var map;
 
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
-          console.log('geoLocation');
           initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
           map.setCenter(initialLocation);
-          //console.log(initialLocation);
         });
       } 
       /////////////////////////////////// end user position
 
       function downloadUrl(url, callback) {
-        console.log('downloadUrl(url, callback)');
+
         var request = window.ActiveXObject ?
           new ActiveXObject('Microsoft.XMLHTTP') :
           new XMLHttpRequest;
 
-        request.onreadystatechange = function() {
-          if (request.readyState == 4) {
-            request.onreadystatechange = doNothing;
-            callback(request, request.status);
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+              var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+              var url = "geo.php?lat="+pos.lat+"&lng="+pos.lng;
+              request.open("GET", url, true);
+              request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+              request.onreadystatechange = function() {
+                  if(request.readyState == 4 && request.status == 200) {
+                      //alert(request.responseText);
+                      request.onreadystatechange = doNothing;
+                      callback(request, request.status);
+                  }
+              }
+              request.send();
+            });
           }
-        };
 
-        request.open('GET', url, true);
-        request.send(null);
+        // request.onreadystatechange = function() {
+        //   if (request.readyState == 4) {
+        //     request.onreadystatechange = doNothing;
+        //     callback(request, request.status);
+        //   }
+        // };
+
+        //request.open('GET', 'geo.php', true);
+        //request.send(null);
       }
 
       function doNothing() {}
