@@ -3,6 +3,12 @@
 $lat = $_GET['lat'];
 $lng = $_GET['lng'];
 
+if(isset($_GET['dist'])) {
+	$dist = $_GET['dist'];
+} else {
+	$dist = 5;
+}
+
 $doc = new DOMDocument( "1.0", "ISO-8859-15" );
 $node = $doc->createElement("markers"); 
 $parnode = $doc->appendChild($node);
@@ -32,7 +38,7 @@ $query = "SELECT
       )
     ) AS distance
   FROM markers
-  HAVING distance < 30 
+  HAVING distance < $dist 
   ORDER BY distance
   LIMIT 0 , 20";
 
