@@ -16,7 +16,7 @@
                 <p id="accuracy"></p>
               </div>
               <input type="text" id="distInput" value="3">
-              <input id="dist" type="range" min="1" max="50" step="1" onchange="updateDistInput(this.value);" />
+              <input id="dist" type="range" min="10" max="1000" step="10" onchange="updateDistInput(this.value);" />
               <input type="button" value="Set distance" onclick="location.reload();">
               <div id="placesInfo">
               <br>
@@ -34,8 +34,7 @@
     <script>
 
       var map;
-      var dist = document.getElementById('distInput').value;
-      console.log(dist);      
+      var dist = document.getElementById('distInput').value;      
       var customLabel = {
         restaurant: {
           label: 'R'
@@ -53,7 +52,7 @@
   
         var infoWindow = new google.maps.InfoWindow;
 
-        downloadUrl('geo.php', function(data) {
+        downloadUrl('get.php', function(data) {
           var xml = data.responseXML;
           var markers = xml.documentElement.getElementsByTagName('marker');
           Array.prototype.forEach.call(markers, function(markerElem) {
@@ -89,7 +88,7 @@
             });
           });
         });
-      } // end init map
+      }
 
       var userPosOptions = {
         enableHighAccuracy: true,
@@ -143,7 +142,7 @@
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
               };
-              var url = "geo.php?dist="+dist+"&lat="+pos.lat+"&lng="+pos.lng;
+              var url = "get.php?dist="+dist+"&lat="+pos.lat+"&lng="+pos.lng;
               request.open("GET", url, true);
               request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
               request.onreadystatechange = function() {

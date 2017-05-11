@@ -19,8 +19,6 @@ if (mysqli_connect_errno())
   echo "Failed to connect to MySQL: " . mysqli_connect_error();
   }
 
-//$query = "SELECT * FROM markers WHERE 1"; // where distance (lat,lng) less than...
-
 $query = "SELECT
     id,
     name,
@@ -40,7 +38,7 @@ $query = "SELECT
   FROM markers
   HAVING distance < $dist 
   ORDER BY distance
-  LIMIT 0 , 20";
+  LIMIT 0 , 200";
 
 $result = mysqli_query($connection, $query);
 if (!$result) {
