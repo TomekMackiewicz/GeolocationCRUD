@@ -19,12 +19,25 @@
                 <p id="long"></p>
                 <p id="accuracy"></p>
               </div>
-              <hr>
-              <input type="text" id="distInput" value="3"> km
-              <input id="dist" type="range" min="1" max="1000" step="10" onchange="updateDistInput(this.value);" />
-              <input type="button" value="Set distance" onclick="location.reload();">
+              <div id="setRange">
+                <hr>
+                <p><strong>Set range</strong></p>   
+                <input type="text" id="distInput" value="3"> km
+                <input id="dist" type="range" min="1" max="1000" step="10" onchange="updateDistInput(this.value);" />
+                <input type="button" value="Set distance" onclick="location.reload();">              
+              </div>
+              <div id="setLocation">
+                <hr>
+                <p><strong>Search near...</strong></p>
+                <form action="get.php" method="post" class="form-inline">
+                    <div class="form-group">
+                        <input type="text" id="center" class="form-control" name="center" placeholder="Type address">
+                    </div>
+                    <input type="submit" class="btn btn-default" value="Submit">
+                </form>                
+              </div>
               <div id="placesInfo">
-              <hr>
+                <hr>
                 <p><strong>Nearby:</strong></p>
                 <ul id="places">
                 </ul>
