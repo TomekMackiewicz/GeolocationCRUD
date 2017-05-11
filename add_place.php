@@ -1,6 +1,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Add new location</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 </head>
 <body onload="initialize()">
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFuaH_8dXWWtV4qDTLhobOVoB_GsljS_Y"></script>
@@ -32,7 +33,7 @@
     geocoder = new google.maps.Geocoder();
     var latlng = new google.maps.LatLng(52.2296756, 21.012228700000037);
     var mapOptions = {
-      zoom: 13,
+      zoom: 15,
       center: latlng
     }
     map = new google.maps.Map(document.getElementById('map'), mapOptions);
@@ -58,24 +59,41 @@
   }   
 </script>
 
-    <form action="process.php" method="post">
-        Name:<br>
-        <input type="text" id="name" name="name"><br>
-        Address:<br>
-        <input type="text" id="address" name="address" value="Warsaw"><br>
-        Lat:<br>
-        <input type="text" id="lat" name="lat"><br>
-        Long:<br>
-        <input type="text" id="long" name="long"><br>
-        Type:<br>
-        <select id="type" name="type">
-          <option value="restaurant">Restaurant</option>
-          <option value="bar">Bar</option>
-        </select>
-        <input type="submit" value="Submit">        
-    </form>
-    <input type="button" value="Show on map" onclick="codeAddress()">
-    <div id="map" style="width: 500px; height: 500px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <form action="process.php" method="post">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" class="form-control" name="address" value="Warsaw">
+                    </div>
+                    <div class="form-group">
+                        <label for="lat">Latitude:</label>
+                        <input type="text" id="lat" class="form-control" name="lat">
+                    </div>
+                    <div class="form-group">
+                        <label for="long">Longtitude:</label>
+                        <input type="text" id="long" class="form-control" name="long">
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <select id="type" class="form-control" name="type">
+                          <option value="restaurant">Restaurant</option>
+                          <option value="bar">Bar</option>
+                        </select>
+                    </div>
+                    <input type="submit" class="btn btn-default" value="Submit">
+                </form>
+                <input type="button" value="Show on map" onclick="codeAddress()">            
+            </div>    
+            <div class="col-md-6">
+                <div id="map" style="width: 100%; height: 400px"></div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
