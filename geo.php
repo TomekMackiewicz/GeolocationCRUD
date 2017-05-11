@@ -40,8 +40,6 @@ $result = mysqli_query($connection, $query);
 if (!$result) {
   die('Invalid query.');
 }
-//$row=mysqli_fetch_all($result);
-//var_dump($row);
 
 header( "content-type: application/xml; charset=ISO-8859-15" );
 
