@@ -7,176 +7,201 @@
   </head>
   <body>
     <div class="container">
+        <hr>
+        <a href="add.html">Add</a>
         <div class="row">
             <div class="col-md-4">
               <div id="userInfo">
+                <hr>
                 <p><img src="icon.png"> <strong>Your location:</strong></p>
+                <p id="formatted_address"></p>
                 <p id="lat"></p>
                 <p id="long"></p>
                 <p id="accuracy"></p>
               </div>
-              <input type="text" id="distInput" value="3">
-              <input id="dist" type="range" min="10" max="1000" step="10" onchange="updateDistInput(this.value);" />
+              <hr>
+              <input type="text" id="distInput" value="3"> km
+              <input id="dist" type="range" min="1" max="1000" step="10" onchange="updateDistInput(this.value);" />
               <input type="button" value="Set distance" onclick="location.reload();">
               <div id="placesInfo">
-              <br>
+              <hr>
                 <p><strong>Nearby:</strong></p>
                 <ul id="places">
                 </ul>
               </div>           
             </div>    
             <div class="col-md-8">
+                <hr>
                 <div id="map" style="width: 100%; height: 400px"></div>
             </div>
         </div>
     </div>  
 
-    <script>
+<script>
 
-      var map;
-      var dist = document.getElementById('distInput').value;      
-      var customLabel = {
-        restaurant: {
-          label: 'R'
-        },
-        bar: {
-          label: 'B'
-        }
-      };
+  var map;
+  var dist = document.getElementById('distInput').value;      
+  var customLabel = {
+    restaurant: {
+      label: 'R'
+    },
+    bar: {
+      label: 'B'
+    }
+  };
 
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          //center: new google.maps.LatLng(52.22937, 21.01135),
-          zoom: 15
-        });
-  
-        var infoWindow = new google.maps.InfoWindow;
+  function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+      //center: new google.maps.LatLng(52.22937, 21.01135),
+      zoom: 15
+    });
 
-        downloadUrl('get.php', function(data) {
-          var xml = data.responseXML;
-          var markers = xml.documentElement.getElementsByTagName('marker');
-          Array.prototype.forEach.call(markers, function(markerElem) {
-            var id = markerElem.getAttribute('id');
-            var name = markerElem.getAttribute('name');
-            var address = markerElem.getAttribute('address');
-            var type = markerElem.getAttribute('type');
-            var point = new google.maps.LatLng(
-              parseFloat(markerElem.getAttribute('lat')),
-              parseFloat(markerElem.getAttribute('lng'))
-            );
+    var infoWindow = new google.maps.InfoWindow;
 
-            var places = document.getElementById('places');
-            places.innerHTML += '<li>'+name+', '+address+', '+type+'</li>';
-
-            var infowincontent = document.createElement('div');
-            var strong = document.createElement('strong');
-            strong.textContent = name
-            infowincontent.appendChild(strong);
-            infowincontent.appendChild(document.createElement('br'));
-            var text = document.createElement('text');
-            text.textContent = address
-            infowincontent.appendChild(text);
-            var icon = customLabel[type] || {};
-            var marker = new google.maps.Marker({
-              map: map,
-              position: point,
-              label: icon.label
-            });
-            marker.addListener('click', function() {
-              infoWindow.setContent(infowincontent);
-              infoWindow.open(map, marker);
-            });
-          });
-        });
-      }
-
-      var userPosOptions = {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
-      };
-
-      function userLocation(pos) {
-        var crd = pos.coords;
-        var userLat = document.getElementById('lat');
-        var userLong = document.getElementById("long");
-        var userAccuracy = document.getElementById("accuracy");
-        userLat.innerHTML = `Latitude : ${crd.latitude}`;
-        userLong.innerHTML = `Longitude: ${crd.longitude}`;
-        userAccuracy.innerHTML = `Accuracy: ${crd.accuracy} meters.`;
-
-        var userCoords = new google.maps.LatLng(
-          parseFloat(crd.latitude),
-          parseFloat(crd.longitude)
+    downloadUrl('get.php', function(data) {
+      var xml = data.responseXML;
+      if(xml.activeElement.children.length ==0) {
+        places.innerHTML = '<li>Nothing was found :(</li>';
+      }      
+      var markers = xml.documentElement.getElementsByTagName('marker');
+      Array.prototype.forEach.call(markers, function(markerElem) {
+        var id = markerElem.getAttribute('id');
+        var name = markerElem.getAttribute('name');
+        var address = markerElem.getAttribute('address');
+        var type = markerElem.getAttribute('type');
+        var point = new google.maps.LatLng(
+          parseFloat(markerElem.getAttribute('lat')),
+          parseFloat(markerElem.getAttribute('lng'))
         );
-        var icon = "icon.png";
-        var userMarker = new google.maps.Marker({
+
+        var places = document.getElementById('places');
+        places.innerHTML += '<li>'+name+', '+address+', '+type+'</li>';
+
+        var infowincontent = document.createElement('div');
+        var strong = document.createElement('strong');
+        strong.textContent = name
+        infowincontent.appendChild(strong);
+        infowincontent.appendChild(document.createElement('br'));
+        var text = document.createElement('text');
+        text.textContent = address
+        infowincontent.appendChild(text);
+        var icon = customLabel[type] || {};
+        var marker = new google.maps.Marker({
           map: map,
-          position: userCoords,
-          //labelContent: "You",
-          //label: 'Y'
-          icon: icon
+          position: point,
+          label: icon.label
         });
-      };
+        marker.addListener('click', function() {
+          infoWindow.setContent(infowincontent);
+          infoWindow.open(map, marker);
+        });
+      });
+    });
+  }
 
-      function error(err) {
-        console.warn(`ERROR(${err.code}): ${err.message}`);
-      };
+  var userPosOptions = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0
+  };
 
-      navigator.geolocation.getCurrentPosition(userLocation, error, userPosOptions);
+  function userLocation(pos) {
+    var crd = pos.coords;
+    var userLat = document.getElementById('lat');
+    var userLong = document.getElementById("long");
+    var userAccuracy = document.getElementById("accuracy");
+    userLat.innerHTML = `Latitude : ${crd.latitude}`;
+    userLong.innerHTML = `Longitude: ${crd.longitude}`;
+    userAccuracy.innerHTML = `Accuracy: ${crd.accuracy} meters.`;
 
+    //function userAddress(geocoder, map, infowindow) {
+    var geocoder = new google.maps.Geocoder;
+    var latlng = {lat: crd.latitude, lng: crd.longitude};
+    geocoder.geocode({'location': latlng}, function(results, status) {
+      if (status === 'OK') {
+        if (results[1]) {
+          document.getElementById("formatted_address").innerHTML = results[1].formatted_address;
+        } else {
+          window.alert('No results found');
+        }
+      } else {
+        window.alert('Geocoder failed due to: ' + status);
+      }
+    });
+    //}
+
+    var userCoords = new google.maps.LatLng(
+      parseFloat(crd.latitude),
+      parseFloat(crd.longitude)
+    );
+    var icon = "icon.png";
+    var userMarker = new google.maps.Marker({
+      map: map,
+      position: userCoords,
+      //labelContent: "You",
+      //label: 'Y'
+      icon: icon
+    });
+  };
+
+  function error(err) {
+    console.warn(`ERROR(${err.code}): ${err.message}`);
+  };
+
+  navigator.geolocation.getCurrentPosition(userLocation, error, userPosOptions);
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+      map.setCenter(initialLocation);
+    });
+  } 
+
+  function downloadUrl(url, callback) {
+    var request = window.ActiveXObject ?
+      new ActiveXObject('Microsoft.XMLHTTP') :
+      new XMLHttpRequest;
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
-          initialLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-          map.setCenter(initialLocation);
-        });
-      } 
-
-      function downloadUrl(url, callback) {
-        var request = window.ActiveXObject ?
-          new ActiveXObject('Microsoft.XMLHTTP') :
-          new XMLHttpRequest;
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-              var pos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-              };
-              var url = "get.php?dist="+dist+"&lat="+pos.lat+"&lng="+pos.lng;
-              request.open("GET", url, true);
-              request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-              request.onreadystatechange = function() {
-                  if(request.readyState == 4 && request.status == 200) {
-                      request.onreadystatechange = doNothing;
-                      callback(request, request.status);
-                  }
+          var pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          var url = "get.php?dist="+dist+"&lat="+pos.lat+"&lng="+pos.lng;
+          request.open("GET", url, true);
+          request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+          request.onreadystatechange = function() {
+              if(request.readyState == 4 && request.status == 200) {
+                  request.onreadystatechange = doNothing;
+                  callback(request, request.status);
               }
-              request.send();
-            });
           }
-
-        // request.onreadystatechange = function() {
-        //   if (request.readyState == 4) {
-        //     request.onreadystatechange = doNothing;
-        //     callback(request, request.status);
-        //   }
-        // };
-
-        //request.open('GET', 'geo.php', true);
-        //request.send(null);
+          request.send();
+        });
       }
 
-      function doNothing() {}
+    // request.onreadystatechange = function() {
+    //   if (request.readyState == 4) {
+    //     request.onreadystatechange = doNothing;
+    //     callback(request, request.status);
+    //   }
+    // };
 
-      function updateDistInput(val) {
-        document.getElementById('distInput').value=val; 
-      }
+    //request.open('GET', 'geo.php', true);
+    //request.send(null);
+  }
 
-    </script>
+  function doNothing() {}
 
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFuaH_8dXWWtV4qDTLhobOVoB_GsljS_Y&callback=initMap">
-    </script>
+  function updateDistInput(val) {
+    document.getElementById('distInput').value=val; 
+  }
+
+</script>
+
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCFuaH_8dXWWtV4qDTLhobOVoB_GsljS_Y&callback=initMap">
+</script>
 
   </body>
 </html>
