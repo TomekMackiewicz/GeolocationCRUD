@@ -34,9 +34,9 @@ function init() {
 	    initialLocation = new google.maps.LatLng(userCoords.latitude, userCoords.longitude);
 	    map.setCenter(initialLocation);
 	    // Print user lat / lng and accuracy
-	    document.getElementById('lat').innerHTML = `Latitude : ${userCoords.latitude}`;
-	    document.getElementById("long").innerHTML = `Longitude: ${userCoords.longitude}`;
-	    document.getElementById("accuracy").innerHTML = `Accuracy: ${userCoords.accuracy} meters.`;
+	    document.getElementById('lat').innerHTML = 'Latitude : '+userCoords.latitude;
+	    document.getElementById("long").innerHTML = 'Longitude: '+userCoords.longitude;
+	    document.getElementById("accuracy").innerHTML = 'Accuracy: '+userCoords.accuracy+' meters.';
 	    // Print address from lat/lng
 	    geocoder.geocode({'location': latlng}, function(results, status) {
 	        if (status === 'OK') {
@@ -55,7 +55,6 @@ function init() {
                 places.innerHTML = '';			
                 var xml = data.responseXML;     
                 var markers = xml.documentElement.getElementsByTagName('marker');
-                console.log(markers);
                 if(markers.length === 0) {
                     places.innerHTML = '<li>Nothing was found :(</li>';
                 } 
@@ -70,11 +69,11 @@ function init() {
                     );
                     var infoWinContent = document.createElement('div');
                     var strong = document.createElement('strong');
-                    strong.textContent = name
+                    strong.textContent = name;
                     infoWinContent.appendChild(strong);
                     infoWinContent.appendChild(document.createElement('br'));
                     var text = document.createElement('text');
-                    text.textContent = address
+                    text.textContent = address;
                     infoWinContent.appendChild(text);
                     var icon = customLabel[type] || {};
                     var marker = new google.maps.Marker({
@@ -97,11 +96,11 @@ function init() {
                 request.open("GET", dataUrl, true);
                 request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 request.onreadystatechange = function() {
-                    if(request.readyState == 4 && request.status == 200) {
+                    if(request.readyState === 4 && request.status === 200) {
                     request.onreadystatechange = doNothing;
                     callback(request, request.status);
                     }
-                }
+                };
                 request.send();
             }
 	}
@@ -125,7 +124,7 @@ function updateDistInput(val) {
 }
 
 function error(err) {
-    console.warn(`ERROR(${err.code}): ${err.message}`);
+    console.warn('ERROR('+err.code+'): '+err.message);
 };
 
 /*
