@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   </head>
   <!-- <body onload="initMap()"> -->
-  <body>
+  <body onload="init()">
     <div class="container">
         <hr>
         <a href="add.html">Add</a>
@@ -24,8 +24,8 @@
                 <hr>
                 <p><strong>Set range</strong></p>   
                 <input type="text" id="distInput" value="3"> km
-                <input id="dist" type="range" min="1" max="1000" step="10" onchange="updateDistInput(value);" />
-                <input type="button" value="Set distance" onclick="location.reload();">              
+                <input id="dist" type="range" min="1" max="1000" step="10" oninput="updateDistInput(value);" />
+                <input type="button" value="Set distance" onclick="init();">              
               </div>
               <div id="setLocation">
                 <hr>

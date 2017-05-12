@@ -13,7 +13,7 @@ $doc = new DOMDocument( "1.0", "ISO-8859-15" );
 $node = $doc->createElement("markers"); 
 $parnode = $doc->appendChild($node);
 
-$connection=mysqli_connect('localhost', 'root', 'root12', 'agageo');
+$connection=mysqli_connect('localhost', 'root', 'simone', 'agageo');
 if (mysqli_connect_errno())
   {
   echo "Failed to connect to MySQL: " . mysqli_connect_error();

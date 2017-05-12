@@ -1,4 +1,4 @@
-(function(){
+function init() {
 
 	var map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15
@@ -52,12 +52,12 @@
 	    });
 
 		downloadLocations('get.php', function(data) {
-		    var xml = data.responseXML;
-		    if(xml.activeElement.children.length == 0) {
-		      places.innerHTML = '<li>Nothing was found :(</li>';
-		    }      
+			places.innerHTML = '';			
+		    var xml = data.responseXML;     
 		    var markers = xml.documentElement.getElementsByTagName('marker');
-
+		    if(!markers) {
+		      places.innerHTML = '<li>Nothing was found :(</li>';
+		    } 
 		    Array.prototype.forEach.call(markers, function(markerElem) {
 		      	var id = markerElem.getAttribute('id');
 		      	var name = markerElem.getAttribute('name');
@@ -114,13 +114,13 @@
 		alert("Geolocation is not supported by this browser.");
 	}
 
-})();
+};
 
 /*
 Update the value of distance field
 */
 function updateDistInput(val) {
-	document.getElementById('distInput').value = val; 
+	document.getElementById('distInput').value = val;
 }
 
 function error(err) {
