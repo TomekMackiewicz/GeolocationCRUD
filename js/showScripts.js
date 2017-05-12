@@ -55,7 +55,8 @@ function init() {
 			places.innerHTML = '';			
 		    var xml = data.responseXML;     
 		    var markers = xml.documentElement.getElementsByTagName('marker');
-		    if(!markers) {
+		    console.log(markers);
+		    if(markers.length === 0) {
 		      places.innerHTML = '<li>Nothing was found :(</li>';
 		    } 
 		    Array.prototype.forEach.call(markers, function(markerElem) {
