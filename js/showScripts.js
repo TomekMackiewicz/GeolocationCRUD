@@ -1,35 +1,51 @@
 function init() {
 
-    var map = new google.maps.Map(document.getElementById('map'), {
+    var map, 
+        geocoder, 
+        infoWindow, 
+        userPosOptions;
+
+    map = new google.maps.Map(document.getElementById('map'), {
         zoom: 15
     });
-    var geocoder = new google.maps.Geocoder;
-    var infoWindow = new google.maps.InfoWindow;	
-    var userPosOptions = {
+    geocoder = new google.maps.Geocoder;
+    infoWindow = new google.maps.InfoWindow;	
+    userPosOptions = {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0
     };
 
     function load(position) {
-
-        var userCoords = position.coords;
-        var latlng = {lat: userCoords.latitude, lng: userCoords.longitude};
+        
+        var userCoords, 
+            latlng, 
+            markerCoords, 
+            icon, 
+            userMarker, 
+            customLabel, 
+            places, 
+            distance, 
+            dataUrl,
+            initialLocation;
+        
+        userCoords = position.coords;
+        latlng = {lat: userCoords.latitude, lng: userCoords.longitude};
         // Set marker position
-        var markerCoords = new google.maps.LatLng(
+        markerCoords = new google.maps.LatLng(
             parseFloat(userCoords.latitude),
             parseFloat(userCoords.longitude)
         );
-        var icon = "icon.png";
-        var userMarker = new google.maps.Marker({
+        icon = "icon.png";
+        userMarker = new google.maps.Marker({
             map: map,
             position: markerCoords,
             icon: icon
         });	    
-        var customLabel = {restaurant: {label: 'R'},bar: {label: 'B'}};
-        var places = document.getElementById('places');
-        var distance = document.getElementById('distInput').value;      
-        var dataUrl = "get.php?dist="+distance+"&lat="+userCoords.latitude+"&lng="+userCoords.longitude;
+        customLabel = {restaurant: {label: 'R'},bar: {label: 'B'}};
+        places = document.getElementById('places');
+        distance = document.getElementById('distInput').value;      
+        dataUrl = "get.php?dist="+distance+"&lat="+userCoords.latitude+"&lng="+userCoords.longitude;
         // Center map on user location
         initialLocation = new google.maps.LatLng(userCoords.latitude, userCoords.longitude);
         map.setCenter(initialLocation);
@@ -52,31 +68,46 @@ function init() {
         });
 
         downloadLocations('get.php', function(data) {
+            
+            var xml, markers;
+            
             places.innerHTML = '';			
-            var xml = data.responseXML;     
-            var markers = xml.documentElement.getElementsByTagName('marker');
+            xml = data.responseXML;     
+            markers = xml.documentElement.getElementsByTagName('marker');
             if(markers.length === 0) {
                 places.innerHTML = '<li>Nothing was found :(</li>';
             } 
             Array.prototype.forEach.call(markers, function(markerElem) {
-                var id = markerElem.getAttribute('id');
-                var name = markerElem.getAttribute('name');
-                var address = markerElem.getAttribute('address');
-                var type = markerElem.getAttribute('type');
-                var point = new google.maps.LatLng(
+                
+                var id,
+                    name, 
+                    address, 
+                    type, 
+                    point, 
+                    infoWinContent, 
+                    strong, 
+                    text, 
+                    icon, 
+                    marker;
+                
+                id = markerElem.getAttribute('id');
+                name = markerElem.getAttribute('name');
+                address = markerElem.getAttribute('address');
+                type = markerElem.getAttribute('type');
+                point = new google.maps.LatLng(
                     parseFloat(markerElem.getAttribute('lat')),
                     parseFloat(markerElem.getAttribute('lng'))
                 );
-                var infoWinContent = document.createElement('div');
-                var strong = document.createElement('strong');
+                infoWinContent = document.createElement('div');
+                strong = document.createElement('strong');
                 strong.textContent = name;
                 infoWinContent.appendChild(strong);
                 infoWinContent.appendChild(document.createElement('br'));
-                var text = document.createElement('text');
+                text = document.createElement('text');
                 text.textContent = address;
                 infoWinContent.appendChild(text);
-                var icon = customLabel[type] || {};
-                var marker = new google.maps.Marker({
+                icon = customLabel[type] || {};
+                marker = new google.maps.Marker({
                     map: map,
                     position: point,
                     label: icon.label
@@ -108,13 +139,40 @@ function init() {
     /*
     Load current position
     */
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(load, error, userPosOptions);
-    } else {
-        alert("Geolocation is not supported by this browser.");
-    }
+   this.currentPosition = function() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(load, error, userPosOptions);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    };
 
-};
+    /*
+    Load address
+    */
+    this.addressToLocation = function() {
+        var address = document.getElementById('address').value;
+        geocoder.geocode( { 'address': address}, function(results, status) {
+            if (status === 'OK') {
+                var position = {
+                    'coords': {
+                        latitude:results[0].geometry.location.lat(), 
+                        longitude:results[0].geometry.location.lng()                    
+                    }
+                };
+                load(position);
+            } else {
+              alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    };
+
+    /*
+    Load current position on init
+    */
+    //currentPosition();
+    
+}
 
 /*
 Update the value of distance field
@@ -125,7 +183,7 @@ function updateDistInput(val) {
 
 function error(err) {
     console.warn('ERROR('+err.code+'): '+err.message);
-};
+}
 
 /*
 Called in downloadLocations()
