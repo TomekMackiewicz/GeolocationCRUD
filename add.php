@@ -1,10 +1,6 @@
 <?php
 
-$connection=mysqli_connect('localhost', 'root', 'simone', 'agageo');
-if (mysqli_connect_errno())
-  {
-  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-  }
+require_once('connection.php');
 
 $name = $_POST['name'];
 $address = $_POST['address'];
