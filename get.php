@@ -2,11 +2,14 @@
 
 require_once('connection.php');
 
-$lat = $_GET['lat'];
-$lng = $_GET['lng'];
+$lat = filter_input(INPUT_GET, 'lat', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+$lng = filter_input(INPUT_GET, 'lng', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+//file_put_contents('log.txt', $_GET['lat']);
+//file_put_contents('log.txt', $lat);
 
 if (isset($_GET['dist'])) {
-    $dist = $_GET['dist'];
+    $dist = filter_input(INPUT_GET, 'dist', FILTER_SANITIZE_NUMBER_INT);
 } else {
     $dist = 5;
 }
