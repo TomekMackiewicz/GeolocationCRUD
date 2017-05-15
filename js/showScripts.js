@@ -3,11 +3,16 @@ function init() {
     var map,
             geocoder,
             infoWindow,
+            latlng,
+            mapOptions,
             userPosOptions;
 
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 15
-    });
+    latlng = new google.maps.LatLng(52.2296756, 21.012228700000037);
+    mapOptions = {
+        zoom: 15,
+        center: latlng
+    };
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
     geocoder = new google.maps.Geocoder;
     infoWindow = new google.maps.InfoWindow;
     userPosOptions = {

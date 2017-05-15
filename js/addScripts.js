@@ -1,36 +1,31 @@
-// function(){
+function init() {
 
-// 	var latlng = new google.maps.LatLng(52.2296756, 21.012228700000037);
-//   	var mapOptions = {
-//     	zoom: 15,
-//     	center: latlng
-//   	}
-//   	var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-//   	var geocoder = new google.maps.Geocoder();
+    var geocoder, latlng, mapOptions, map;
 
-// 	function initialize() {
-// 	}
+    geocoder = new google.maps.Geocoder();
+    latlng = new google.maps.LatLng(52.2296756, 21.012228700000037);
+    mapOptions = {
+        zoom: 15,
+        center: latlng
+    };
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-// };
-
-// function addressToLocation() {
-
-//   var geocoder = new google.maps.Geocoder;
-//   var address = document.getElementById('address').value;
-
-//   geocoder.geocode( { 'address': address}, function(results, status) {
-//     if (status == 'OK') {
-//       map.setCenter(results[0].geometry.location);
-//       var marker = new google.maps.Marker({
-//           map: map,
-//           position: results[0].geometry.location            
-//       });
-//       var lat = document.getElementById('lat');
-//       var long = document.getElementById('long');
-//       lat.value = results[0].geometry.location.lat();  
-//       long.value = results[0].geometry.location.lng();
-//     } else {
-//       alert('Geocode was not successful for the following reason: ' + status);
-//     }
-//   });
-// }
+    this.addressToLocation = function() {
+        var address = document.getElementById('address').value;
+        geocoder.geocode({'address': address}, function(results, status) {
+            if (status === 'OK') {
+                map.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+                var lat = document.getElementById('lat');
+                var lng = document.getElementById('lng');
+                lat.value = results[0].geometry.location.lat();
+                lng.value = results[0].geometry.location.lng();
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    };
+}
