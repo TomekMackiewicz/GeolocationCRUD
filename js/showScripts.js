@@ -31,7 +31,7 @@ function init() {
         if (userCoords.accuracy) {
             document.getElementById("accuracy").innerHTML = 'Accuracy: ' + userCoords.accuracy + ' meters.';
         } else {
-            document.getElementById("accuracy").style.display = 'none';
+            document.getElementById("accuracy").innerHTML = '';
         }
         // Print address from lat/lng
         geocoder.geocode({'location': latlng}, function(results, status) {
