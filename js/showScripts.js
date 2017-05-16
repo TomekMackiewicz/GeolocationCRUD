@@ -4,6 +4,7 @@ function init() {
         zoom: 15
     });
     var geocoder = new google.maps.Geocoder;
+    var directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true});
     var infoWindow = new google.maps.InfoWindow;
     var userPosOptions = {enableHighAccuracy: true, timeout: 5000, maximumAge: 0};
 
@@ -12,11 +13,12 @@ function init() {
         var latlng = {lat: userCoords.latitude, lng: userCoords.longitude};
         // Set marker position
         var markerCoords = new google.maps.LatLng(parseFloat(userCoords.latitude), parseFloat(userCoords.longitude));
-        var icon = "icon.png";
+        var iconUser = "icon.png";
+        var iconWay = "way.png";
         var userMarker = new google.maps.Marker({
             map: map,
             position: markerCoords,
-            icon: icon
+            icon: iconUser
         });
         var customLabel = {restaurant: {label: 'R'}, bar: {label: 'B'}};
         var places = document.getElementById('places');
@@ -59,6 +61,7 @@ function init() {
                 var address = markerElem.getAttribute('address');
                 var type = markerElem.getAttribute('type');
                 var point = new google.maps.LatLng(parseFloat(markerElem.getAttribute('lat')), parseFloat(markerElem.getAttribute('lng')));
+                // Print info window
                 var infoWinContent = document.createElement('div');
                 var strong = document.createElement('strong');
                 strong.textContent = name;
@@ -67,6 +70,13 @@ function init() {
                 var text = document.createElement('text');
                 text.textContent = address;
                 infoWinContent.appendChild(text);
+                infoWinContent.appendChild(document.createElement('br'));
+                var way = document.createElement("img");
+                way.setAttribute("src", "way.png");
+                way.setAttribute("height", "36");
+                way.setAttribute("width", "36");
+                way.setAttribute("alt", "Search route");
+                infoWinContent.appendChild(way);
                 var icon = customLabel[type] || {};
                 var marker = new google.maps.Marker({
                     map: map,
@@ -77,6 +87,10 @@ function init() {
                     infoWindow.setContent(infoWinContent);
                     infoWindow.open(map, marker);
                 });
+                way.addEventListener('click', function() {
+                    findRoute(map, markerCoords, directionsDisplay, text);
+                });
+                // Print places list
                 places.innerHTML += '<li>' + name + ', ' + address + ', ' + type + '</li>';
             });
         });
@@ -143,3 +157,26 @@ function error(err) {
  Why?
  */
 function doNothing() {}
+
+function findRoute(map, markerCoords, directionsDisplay, endpoint) {
+    document.getElementById('directionsPanel').innerHTML = "";
+    var directionsService = new google.maps.DirectionsService();
+    //var start = document.getElementById('formatted_address').innerHTML;
+    var start = markerCoords;
+    var end = endpoint.innerHTML;
+    var selectedMode = document.getElementById('travelMode').value;
+
+    directionsDisplay.setMap(map);
+    directionsDisplay.setPanel(document.getElementById('directionsPanel'));
+
+    var request = {
+        origin: start,
+        destination: end,
+        travelMode: selectedMode
+    };
+    directionsService.route(request, function(result, status) {
+        if (status == 'OK') {
+            directionsDisplay.setDirections(result);
+        }
+    });
+}
