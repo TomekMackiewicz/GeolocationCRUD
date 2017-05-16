@@ -7,27 +7,40 @@ function init() {
     var directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true});
     var infoWindow = new google.maps.InfoWindow;
     var userPosOptions = {enableHighAccuracy: true, timeout: 5000, maximumAge: 0};
+    var iconUser = "icon.png";
+    var iconWay = "way.png";
+    var places = document.getElementById('places');
+    var distance = document.getElementById('distInput').value;
 
+    /*
+     * Load locations and user location.
+     * Print locations and addresses.
+     */
     function load(position) {
         var userCoords = position.coords;
         var latlng = {lat: userCoords.latitude, lng: userCoords.longitude};
-        // Set marker position
-        var markerCoords = new google.maps.LatLng(parseFloat(userCoords.latitude), parseFloat(userCoords.longitude));
-        var iconUser = "icon.png";
-        var iconWay = "way.png";
+        var locationLabel = {restaurant: {label: 'R'}, bar: {label: 'B'}};
+        var dataUrl = "get.php?dist=" + distance + "&lat=" + userCoords.latitude + "&lng=" + userCoords.longitude;
+
+        /*
+         * Set marker position.
+         */
+        var userMarkerCoords = new google.maps.LatLng(parseFloat(userCoords.latitude), parseFloat(userCoords.longitude));
         var userMarker = new google.maps.Marker({
             map: map,
-            position: markerCoords,
+            position: userMarkerCoords,
             icon: iconUser
         });
-        var customLabel = {restaurant: {label: 'R'}, bar: {label: 'B'}};
-        var places = document.getElementById('places');
-        var distance = document.getElementById('distInput').value;
-        var dataUrl = "get.php?dist=" + distance + "&lat=" + userCoords.latitude + "&lng=" + userCoords.longitude;
-        // Center map on user location
+
+        /*
+         * Center map on user location.
+         */
         var initialLocation = new google.maps.LatLng(userCoords.latitude, userCoords.longitude);
         map.setCenter(initialLocation);
-        // Print user lat / lng and accuracy
+
+        /*
+         * Print user lat / lng and accuracy.
+         */
         document.getElementById('lat').innerHTML = 'Latitude : ' + userCoords.latitude;
         document.getElementById("lng").innerHTML = 'Longitude: ' + userCoords.longitude;
         if (userCoords.accuracy) {
@@ -35,7 +48,10 @@ function init() {
         } else {
             document.getElementById("accuracy").innerHTML = '';
         }
-        // Print address from lat/lng
+
+        /*
+         * Print address from lat/lng.
+         */
         geocoder.geocode({'location': latlng}, function(results, status) {
             if (status === 'OK') {
                 if (results[1]) {
@@ -48,6 +64,9 @@ function init() {
             }
         });
 
+        /*
+         * Load locations from database.
+         */
         downloadLocations('get.php', function(data) {
             places.innerHTML = '';
             var xml = data.responseXML;
@@ -61,7 +80,10 @@ function init() {
                 var address = markerElem.getAttribute('address');
                 var type = markerElem.getAttribute('type');
                 var point = new google.maps.LatLng(parseFloat(markerElem.getAttribute('lat')), parseFloat(markerElem.getAttribute('lng')));
-                // Print info window
+
+                /*
+                 * Print markers info windows.
+                 */
                 var infoWinContent = document.createElement('div');
                 var strong = document.createElement('strong');
                 strong.textContent = name;
@@ -77,20 +99,31 @@ function init() {
                 way.setAttribute("width", "36");
                 way.setAttribute("alt", "Search route");
                 infoWinContent.appendChild(way);
-                var icon = customLabel[type] || {};
+
+                /*
+                 * Print locations markers.
+                 */
+                var locationIcon = locationLabel[type] || {};
                 var marker = new google.maps.Marker({
                     map: map,
                     position: point,
-                    label: icon.label
+                    label: locationIcon.label
                 });
                 marker.addListener('click', function() {
                     infoWindow.setContent(infoWinContent);
                     infoWindow.open(map, marker);
                 });
+
+                /*
+                 * Listen to fingd route
+                 */
                 way.addEventListener('click', function() {
-                    findRoute(map, markerCoords, directionsDisplay, text);
+                    findRoute(map, userMarkerCoords, directionsDisplay, text);
                 });
-                // Print places list
+
+                /*
+                 * Print places list
+                 */
                 places.innerHTML += '<li>' + name + ', ' + address + ', ' + type + '</li>';
             });
         });
@@ -165,7 +198,6 @@ function findRoute(map, markerCoords, directionsDisplay, endpoint) {
     var start = markerCoords;
     var end = endpoint.innerHTML;
     var selectedMode = document.getElementById('travelMode').value;
-
     directionsDisplay.setMap(map);
     directionsDisplay.setPanel(document.getElementById('directionsPanel'));
 
