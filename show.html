@@ -11,13 +11,9 @@
         <a href="add.html">Add</a>
         <div class="row">
             <div class="col-md-3">
-                <div id="userInfo">
+                <div id="searchNearby">
                     <hr>
-                    <p><img src="icon.png"> <button class="btn btn-default" onclick="(new init()).currentPosition();">Search nerby</button></p>
-                    <p id="formatted_address"></p>
-                    <p id="lat"></p>
-                    <p id="lng"></p>
-                    <p id="accuracy"></p>
+                    <p><img src="icon.png"> <button class="btn btn-default" onclick="(new init()).currentPosition();">Search nearby</button></p>
                 </div>
                 <div id="setLocation">
                     <hr>
@@ -28,7 +24,7 @@
                 <div id="setRange">
                     <hr>
                     <p><strong>Set range</strong></p>
-                    <input type="text" id="distInput" value="3"> km
+                    <input type="text" id="distInput" value="5"> km
                     <input id="dist" type="range" min="1" max="1000" step="10" oninput="updateDistInput(value);" />
                 </div>
             </div>
@@ -37,11 +33,18 @@
                 <div id="map" style="width: 100%; height: 400px"></div>
             </div>
             <div class="col-md-3">
+                <div id="locationInfo">
+                    <hr>
+                    <p><strong>Searched location:</strong></p>
+                    <p id="formatted_address"></p>
+                    <p id="lat"></p>
+                    <p id="lng"></p>
+                    <p id="accuracy"></p>
+                </div>
                 <div id="placesInfo">
                     <hr>
-                    <p><strong>Nearby:</strong></p>
-                    <ul id="places">
-                    </ul>
+                    <p><strong>Results:</strong></p>
+                    <ul id="places"></ul>
                 </div>
             </div>
         </div>

@@ -1,14 +1,9 @@
 function init() {
-
-    var geocoder, latlng, mapOptions, map;
-
-    geocoder = new google.maps.Geocoder();
-    latlng = new google.maps.LatLng(52.2296756, 21.012228700000037);
-    mapOptions = {
-        zoom: 15,
-        center: latlng
-    };
-    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center: new google.maps.LatLng(52.2296756, 21.012228700000037),
+        zoom: 15
+    });
+    var geocoder = new google.maps.Geocoder();
 
     this.addressToLocation = function() {
         var address = document.getElementById('address').value;
