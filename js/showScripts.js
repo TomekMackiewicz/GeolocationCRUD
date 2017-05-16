@@ -8,7 +8,6 @@ function init() {
     var infoWindow = new google.maps.InfoWindow;
     var userPosOptions = {enableHighAccuracy: true, timeout: 5000, maximumAge: 0};
     var iconUser = "icon.png";
-    var iconWay = "way.png";
     var places = document.getElementById('places');
     var distance = document.getElementById('distInput').value;
 
@@ -92,13 +91,25 @@ function init() {
                 var text = document.createElement('text');
                 text.textContent = address;
                 infoWinContent.appendChild(text);
-                infoWinContent.appendChild(document.createElement('br'));
-                var way = document.createElement("img");
-                way.setAttribute("src", "way.png");
-                way.setAttribute("height", "36");
-                way.setAttribute("width", "36");
-                way.setAttribute("alt", "Search route");
-                infoWinContent.appendChild(way);
+                infoWinContent.appendChild(document.createElement('hr'));
+                var urlButton = document.createElement("button");
+                urlButton.setAttribute("class", "btn btn-default");
+                infoWinContent.appendChild(urlButton);                
+                var routeButton = document.createElement("button");
+                routeButton.setAttribute("class", "btn btn-default");
+                infoWinContent.appendChild(routeButton);
+                var iconWWW = document.createElement("img");
+                iconWWW.setAttribute("src", "www.png");
+                iconWWW.setAttribute("height", "36");
+                iconWWW.setAttribute("width", "36");
+                iconWWW.setAttribute("alt", "Visit website");
+                urlButton.appendChild(iconWWW);                
+                var iconWay = document.createElement("img");
+                iconWay.setAttribute("src", "way.png");
+                iconWay.setAttribute("height", "36");
+                iconWay.setAttribute("width", "36");
+                iconWay.setAttribute("alt", "Search route");
+                routeButton.appendChild(iconWay);
 
                 /*
                  * Print locations markers.
@@ -117,7 +128,7 @@ function init() {
                 /*
                  * Listen to find route.
                  */
-                way.addEventListener('click', function() {
+                routeButton.addEventListener('click', function() {
                     findRoute(map, userMarkerCoords, directionsDisplay, text);
                 });
 
