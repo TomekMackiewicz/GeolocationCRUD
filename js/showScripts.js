@@ -115,19 +115,22 @@ function init() {
                 });
 
                 /*
-                 * Listen to fingd route
+                 * Listen to find route.
                  */
                 way.addEventListener('click', function() {
                     findRoute(map, userMarkerCoords, directionsDisplay, text);
                 });
 
                 /*
-                 * Print places list
+                 * Print places list.
                  */
                 places.innerHTML += '<li>' + name + ', ' + address + ', ' + type + '</li>';
             });
         });
-
+        
+        /*
+         * Call PHP script.
+         */
         function downloadLocations(url, callback) {
             var request = window.ActiveXObject ? new ActiveXObject('Microsoft.XMLHTTP') : new XMLHttpRequest;
             request.open("GET", dataUrl, true);
@@ -143,7 +146,7 @@ function init() {
     }
 
     /*
-     Load current position
+     Search by current position.
      */
     this.currentPosition = function() {
         if (navigator.geolocation) {
@@ -154,7 +157,7 @@ function init() {
     };
 
     /*
-     Load address
+     Search by address.
      */
     this.addressToLocation = function() {
         var address = document.getElementById('address').value;
@@ -175,7 +178,7 @@ function init() {
 }
 
 /*
- Update the value of distance field
+ Update the value of distance field.
  */
 function updateDistInput(val) {
     document.getElementById('distInput').value = val;
@@ -191,10 +194,12 @@ function error(err) {
  */
 function doNothing() {}
 
+/*
+ * Find route to location.
+ */
 function findRoute(map, markerCoords, directionsDisplay, endpoint) {
     document.getElementById('directionsPanel').innerHTML = "";
     var directionsService = new google.maps.DirectionsService();
-    //var start = document.getElementById('formatted_address').innerHTML;
     var start = markerCoords;
     var end = endpoint.innerHTML;
     var selectedMode = document.getElementById('travelMode').value;
@@ -207,7 +212,7 @@ function findRoute(map, markerCoords, directionsDisplay, endpoint) {
         travelMode: selectedMode
     };
     directionsService.route(request, function(result, status) {
-        if (status == 'OK') {
+        if (status === 'OK') {
             directionsDisplay.setDirections(result);
         }
     });
