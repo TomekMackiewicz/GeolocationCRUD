@@ -8,7 +8,7 @@ function init() {
     var infoWindow = new google.maps.InfoWindow;
     var userPosOptions = {enableHighAccuracy: true, timeout: 5000, maximumAge: 0};
     var iconUser = "icon.png";
-    var places = document.getElementById('places');
+    var locations = document.getElementById('locations');
     var distance = document.getElementById('distInput').value;
 
     /*
@@ -67,11 +67,11 @@ function init() {
          * Load locations from database.
          */
         downloadLocations('get.php', function(data) {
-            places.innerHTML = '';
+            locations.innerHTML = '';
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
             if (markers.length === 0) {
-                places.innerHTML = '<li>Nothing was found :(</li>';
+                locations.innerHTML = '<li>Nothing was found :(</li>';
             }
             Array.prototype.forEach.call(markers, function(markerElem) {
                 var id = markerElem.getAttribute('id');
@@ -133,9 +133,11 @@ function init() {
                 });
 
                 /*
-                 * Print places list.
+                 * Print locations list.
                  */
-                places.innerHTML += '<li>' + name + ', ' + address + ', ' + type + '</li>';
+                locations.innerHTML += '<tr><td>' + name + '</td><td>' + address + '</td><td>' + type + '</td></tr>';
+                //var content = document.createTextNode("<tr><td>' + name + '</td><td>' + address + '</td><td>' + type + '</td></tr>");
+                //places.appendChild(content);
             });
         });
 
@@ -227,4 +229,30 @@ function findRoute(map, markerCoords, directionsDisplay, endpoint) {
             directionsDisplay.setDirections(result);
         }
     });
+}
+
+/*
+ * Filter locations.
+ */
+function filterLocations(field, type) {
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("filterInput" + type);
+    console.log(input);
+    // Remove toUpperCase() to perform a case-sensitive search.
+    filter = input.value.toUpperCase(); // letters typed in the search field
+    table = document.getElementById("locations");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+        // Change [0] to filter by different fields. Here: user variable 'field' (see HTML)
+        td = tr[i].getElementsByTagName("td")[field];
+        if (td) {
+            // substring to force match string from the the first letters.
+            // filter.length = number of letters in search field.
+            if (td.innerHTML.substring(0, filter.length).toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
 }

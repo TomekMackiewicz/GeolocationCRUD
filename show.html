@@ -39,12 +39,12 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <hr>
                 <div id="map" style="width: 100%; height: 400px"></div>
                 <div id="directionsPanel"></div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div id="locationInfo">
                     <hr>
                     <p><strong>Searched location:</strong></p>
@@ -56,7 +56,16 @@
                 <div id="placesInfo">
                     <hr>
                     <p><strong>Results:</strong></p>
-                    <ul id="places"></ul>
+                    <input type="text" id="filterInputName" onkeyup="filterLocations(0, 'Name')" placeholder="Search for names..">
+                    <input type="text" id="filterInputAddress" onkeyup="filterLocations(1, 'Address')" placeholder="Search for address..">
+                    <input type="text" id="filterInputType" onkeyup="filterLocations(2, 'Type')" placeholder="Search for type..">
+                    <table id="locations" class="table table-bordered">
+                        <!--                        <tr>
+                                                    <th>Name</th>
+                                                    <th>Address</th>
+                                                    <th>Type</th>
+                                                </tr>-->
+                    </table>
                 </div>
             </div>
         </div>
