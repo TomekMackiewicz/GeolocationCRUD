@@ -94,7 +94,7 @@ function init() {
                 infoWinContent.appendChild(document.createElement('hr'));
                 var urlButton = document.createElement("button");
                 urlButton.setAttribute("class", "btn btn-default");
-                infoWinContent.appendChild(urlButton);                
+                infoWinContent.appendChild(urlButton);
                 var routeButton = document.createElement("button");
                 routeButton.setAttribute("class", "btn btn-default");
                 infoWinContent.appendChild(routeButton);
@@ -103,7 +103,7 @@ function init() {
                 iconWWW.setAttribute("height", "36");
                 iconWWW.setAttribute("width", "36");
                 iconWWW.setAttribute("alt", "Visit website");
-                urlButton.appendChild(iconWWW);                
+                urlButton.appendChild(iconWWW);
                 var iconWay = document.createElement("img");
                 iconWay.setAttribute("src", "way.png");
                 iconWay.setAttribute("height", "36");
@@ -138,7 +138,7 @@ function init() {
                 places.innerHTML += '<li>' + name + ', ' + address + ', ' + type + '</li>';
             });
         });
-        
+
         /*
          * Call PHP script.
          */
@@ -196,7 +196,7 @@ function updateDistInput(val) {
 }
 
 function error(err) {
-    console.warn('ERROR(' + err.code + '): ' + err.message);
+    alert('ERROR(' + err.code + '): ' + err.message);
 }
 
 /*
