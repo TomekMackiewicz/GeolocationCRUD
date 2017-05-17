@@ -234,25 +234,56 @@ function findRoute(map, markerCoords, directionsDisplay, endpoint) {
 /*
  * Filter locations.
  */
-function filterLocations(field, type) {
-    var input, filter, table, tr, td, i;
-    input = document.getElementById("filterInput" + type);
-    console.log(input);
-    // Remove toUpperCase() to perform a case-sensitive search.
-    filter = input.value.toUpperCase(); // letters typed in the search field
+//function filterLocations(field, type) {
+//    var input, filter, table, tr, td, i;
+//    input = document.getElementById("filterInput" + type);
+//    // Remove toUpperCase() to perform a case-sensitive search.
+//    filter = input.value.toUpperCase(); // letters typed in the search field
+//    table = document.getElementById("locations");
+//    tr = table.getElementsByTagName("tr");
+//    for (i = 0; i < tr.length; i++) {
+//        // Change [0] to filter by different fields. Here: user variable 'field' (see HTML)
+//        td = tr[i].getElementsByTagName("td")[field];
+//        if (td) {
+//            // substring to force match string from the the first letters.
+//            // filter.length = number of letters in search field.
+//            if (td.innerHTML.substring(0, filter.length).toUpperCase().indexOf(filter) > -1) {
+//                tr[i].style.display = "";
+//            } else {
+//                tr[i].style.display = "none";
+//            }
+//        }
+//    }
+//}
+
+function filterLocations() {
+    var inputs, filter = [], table, tr, td = [], i, j, k;
+    inputs = document.getElementsByClassName("filterInput");
+    var values = Array.prototype.map.call(inputs, function(el) {
+        return el.value;
+    });
+    for (i = 0; i < inputs.length; i++) {
+        filter.push(values[i].toUpperCase());
+    }
     table = document.getElementById("locations");
     tr = table.getElementsByTagName("tr");
     for (i = 0; i < tr.length; i++) {
-        // Change [0] to filter by different fields. Here: user variable 'field' (see HTML)
-        td = tr[i].getElementsByTagName("td")[field];
+        for (j = 0; j < inputs.length; j++) {
+            td.push(tr[i].getElementsByTagName("td")[j]);
+        }
         if (td) {
             // substring to force match string from the the first letters.
             // filter.length = number of letters in search field.
-            if (td.innerHTML.substring(0, filter.length).toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
+            for (k = 0; k < inputs.length; k++) {
+                if (td[k].innerHTML.substring(0, filter[k].length).toUpperCase().indexOf(filter[k]) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                    console.log('remove row ' + i);
+                    break;
+                }
             }
         }
+        td.length = 0;
     }
 }
