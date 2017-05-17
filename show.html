@@ -55,10 +55,17 @@
                 </div>
                 <div id="placesInfo">
                     <hr>
-                    <p><strong>Results:</strong></p>
-                    <input type="text" class="filterInput" onkeyup="filterLocations()" placeholder="Search for names..">
-                    <input type="text" class="filterInput" onkeyup="filterLocations()" placeholder="Search for address..">
-                    <input type="text" class="filterInput" onkeyup="filterLocations()" placeholder="Search for type..">
+                    <p><strong>Filter results:</strong></p>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="strictSearch" onclick="resetInputs()"> Strict search
+                        </label>
+                    </div>
+                    <input type="text" class="filterInput" onkeyup="filterLocationsBy()" placeholder="Name..">
+                    <input type="text" class="filterInput" onkeyup="filterLocationsBy()" placeholder="Address..">
+                    <input type="text" class="filterInput" onkeyup="filterLocationsBy()" placeholder="Type..">
+                    <hr>
+                    <p><strong>Results</strong> (<span id="resultsNumber">0</span>)</p>
                     <table id="locations" class="table table-bordered">
                         <!--                        <tr>
                                                     <th>Name</th>

@@ -70,9 +70,11 @@ function init() {
             locations.innerHTML = '';
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
+            document.getElementById("resultsNumber").innerHTML = markers.length;
             if (markers.length === 0) {
                 locations.innerHTML = '<li>Nothing was found :(</li>';
             }
+
             Array.prototype.forEach.call(markers, function(markerElem) {
                 var id = markerElem.getAttribute('id');
                 var name = markerElem.getAttribute('name');
@@ -232,18 +234,18 @@ function findRoute(map, markerCoords, directionsDisplay, endpoint) {
 }
 
 /*
- * Filter locations.
+ * Generic locations filter.
  */
-//function filterLocations(field, type) {
+//function filterLocationsAll() {
 //    var input, filter, table, tr, td, i;
-//    input = document.getElementById("filterInput" + type);
+//    input = document.getElementById("filterInput");
 //    // Remove toUpperCase() to perform a case-sensitive search.
 //    filter = input.value.toUpperCase(); // letters typed in the search field
 //    table = document.getElementById("locations");
 //    tr = table.getElementsByTagName("tr");
 //    for (i = 0; i < tr.length; i++) {
 //        // Change [0] to filter by different fields. Here: user variable 'field' (see HTML)
-//        td = tr[i].getElementsByTagName("td")[field];
+//        td = tr[i].getElementsByTagName("td")[0];
 //        if (td) {
 //            // substring to force match string from the the first letters.
 //            // filter.length = number of letters in search field.
@@ -256,34 +258,74 @@ function findRoute(map, markerCoords, directionsDisplay, endpoint) {
 //    }
 //}
 
-function filterLocations() {
-    var inputs, filter = [], table, tr, td = [], i, j, k;
-    inputs = document.getElementsByClassName("filterInput");
-    var values = Array.prototype.map.call(inputs, function(el) {
+/*
+ * Filter locations by search field.
+ */
+function filterLocationsBy() {
+    // Declare variables.
+    var searchFields, filter = [], table, tr, td = [], rowsArray, rowsCount, i, j, k;
+    // Get all search fields.
+    searchFields = document.getElementsByClassName("filterInput");
+    // Search fields nodes to array.
+    var searchValues = Array.prototype.map.call(searchFields, function(el) {
         return el.value;
     });
-    for (i = 0; i < inputs.length; i++) {
-        filter.push(values[i].toUpperCase());
+    for (i = 0; i < searchFields.length; i++) {
+        filter.push(searchValues[i].toUpperCase());
     }
+    // Prepare table and rows.
     table = document.getElementById("locations");
     tr = table.getElementsByTagName("tr");
+    // For each row...
     for (i = 0; i < tr.length; i++) {
-        for (j = 0; j < inputs.length; j++) {
+        // Prepare table data array
+        for (j = 0; j < searchFields.length; j++) {
             td.push(tr[i].getElementsByTagName("td")[j]);
         }
         if (td) {
-            // substring to force match string from the the first letters.
+            // Check each table data in this row against each search field.
+            // (first td against first search field, second against second etc.
+            // filter[k] = current search field value.
+            // td[k] = current table data in this row.
+            // substring to force match string from the the first letters (based od checkbox!).
             // filter.length = number of letters in search field.
-            for (k = 0; k < inputs.length; k++) {
-                if (td[k].innerHTML.substring(0, filter[k].length).toUpperCase().indexOf(filter[k]) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                    console.log('remove row ' + i);
-                    break;
+            if (document.getElementById('strictSearch').checked) {
+                for (k = 0; k < searchFields.length; k++) {
+                    if (td[k].innerHTML.substring(0, filter[k].length).toUpperCase().indexOf(filter[k]) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                        break; // So that next iteration won't restore the row
+                    }
+                }
+            } else {
+                for (k = 0; k < searchFields.length; k++) {
+                    if (td[k].innerHTML.toUpperCase().indexOf(filter[k]) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                        break; // So that next iteration won't restore the row
+                    }
                 }
             }
+
         }
+        // Set table data to empty array.
         td.length = 0;
     }
+    // Update results number.
+    rowsArray = [].slice.call(tr);
+    rowsCount = rowsArray.filter(function(el) {
+        return getComputedStyle(el).display !== "none";
+    });
+    document.getElementById("resultsNumber").innerHTML = rowsCount.length;
 }
+
+function resetInputs() {
+    var fields = document.getElementsByClassName('filterInput');
+    for (var i = 0; i < fields.length; i++) {
+        fields[i].value = '';
+    }
+}
+
+
