@@ -138,8 +138,6 @@ function init() {
                  * Print locations list.
                  */
                 locations.innerHTML += '<tr><td>' + name + '</td><td>' + address + '</td><td>' + type + '</td></tr>';
-                //var content = document.createTextNode("<tr><td>' + name + '</td><td>' + address + '</td><td>' + type + '</td></tr>");
-                //places.appendChild(content);
             });
         });
 
@@ -234,31 +232,6 @@ function findRoute(map, markerCoords, directionsDisplay, endpoint) {
 }
 
 /*
- * Generic locations filter.
- */
-//function filterLocationsAll() {
-//    var input, filter, table, tr, td, i;
-//    input = document.getElementById("filterInput");
-//    // Remove toUpperCase() to perform a case-sensitive search.
-//    filter = input.value.toUpperCase(); // letters typed in the search field
-//    table = document.getElementById("locations");
-//    tr = table.getElementsByTagName("tr");
-//    for (i = 0; i < tr.length; i++) {
-//        // Change [0] to filter by different fields. Here: user variable 'field' (see HTML)
-//        td = tr[i].getElementsByTagName("td")[0];
-//        if (td) {
-//            // substring to force match string from the the first letters.
-//            // filter.length = number of letters in search field.
-//            if (td.innerHTML.substring(0, filter.length).toUpperCase().indexOf(filter) > -1) {
-//                tr[i].style.display = "";
-//            } else {
-//                tr[i].style.display = "none";
-//            }
-//        }
-//    }
-//}
-
-/*
  * Filter locations by search field.
  */
 function filterLocationsBy() {
@@ -308,7 +281,6 @@ function filterLocationsBy() {
                     }
                 }
             }
-
         }
         // Set table data to empty array.
         td.length = 0;
@@ -327,5 +299,3 @@ function resetInputs() {
         fields[i].value = '';
     }
 }
-
-
